@@ -1,10 +1,9 @@
-python
-
-
-
-
+from mcp.server.fastmcp import FastMCP
 import random
 import requests
+
+# Create an MCP server
+mcp = FastMCP("CurrencyRateFetcher")
 
 # Function to generate a random currency rate between 0.95 and 1.5
 def generate_random_rate():
@@ -37,18 +36,14 @@ def save_rates_to_file(rates_list, filename):
     except IOError as e:
         print(f"An error occurred while writing to the file: {e}")
 
-# Example usage
-if __name__ == '__main__':
-    # Generate a random rate
-    random_rate = generate_random_rate()
-    print(f"Random Rate: {random_rate}")
-
-    # Fetch currency rates from the API
+# Define an MCP task
+@mcp.tool()
+def fetch_and_save_currency_rates():
+    """Fetch currency rates and save the first 10 to a file."""
     api_url = "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@2025-06-06/v1/currencies/usd.json"
     currency_rates = fetch_currency_rates(api_url)
-    print("Currency Rates:")
-    for rate in currency_rates:
-        print(rate)
-
-    # Save the first 10 currency rates to a file
     save_rates_to_file(currency_rates, 'currency_rates.txt')
+
+# Run the MCP server
+if __name__ == '__main__':
+    mcp.run()
