@@ -1,3 +1,8 @@
+python
+
+
+
+
 import random
 import requests
 
@@ -12,16 +17,25 @@ def fetch_currency_rates(api_url):
         response.raise_for_status()  # Raise an error for bad responses
         rates_data = response.json()
         
-        # Convert the response data to a list of tuples (bank, currency_pair, rate)
+        # Convert the response data to a list of tuples (currency, rate)
         rates_list = []
-        for bank, rates in rates_data.items():
-            for currency_pair, rate in rates.items():
-                rates_list.append((bank, currency_pair, rate))
+        for currency, rate in rates_data['usd'].items():
+            rates_list.append((currency, rate))
         
-        return rates_list
+        return rates_list[:10]  # Return only the first 10 rates
     except requests.exceptions.RequestException as e:
         print(f"An error occurred: {e}")
         return []
+
+# Method to save currency rates to a file
+def save_rates_to_file(rates_list, filename):
+    try:
+        with open(filename, 'w') as file:
+            for currency, rate in rates_list:
+                file.write(f"{currency}: {rate}\n")
+        print(f"Rates saved to {filename}")
+    except IOError as e:
+        print(f"An error occurred while writing to the file: {e}")
 
 # Example usage
 if __name__ == '__main__':
@@ -30,8 +44,11 @@ if __name__ == '__main__':
     print(f"Random Rate: {random_rate}")
 
     # Fetch currency rates from the API
-    api_url = "http://localhost:8000/currency-rates/"
+    api_url = "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@2025-06-06/v1/currencies/usd.json"
     currency_rates = fetch_currency_rates(api_url)
     print("Currency Rates:")
     for rate in currency_rates:
         print(rate)
+
+    # Save the first 10 currency rates to a file
+    save_rates_to_file(currency_rates, 'currency_rates.txt')
