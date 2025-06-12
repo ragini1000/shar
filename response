@@ -1,0 +1,195 @@
+from mcp.server.fastmcp import FastMCP
+from typing import List, Dict, Optional
+from datetime import datetime
+from uuid import uuid4
+import random
+import requests
+
+# Create an MCP server
+mcp = FastMCP("CurrencyConversionDemo")
+
+# Data models
+class CurrencyRate:
+    def __init__(self, from_currency: str, to_currency: str, rate: float):
+        self.rate_id = str(uuid4())
+        self.from_currency = from_currency
+        self.to_currency = to_currency
+        self.rate = rate
+        self.updated_at = datetime.now().isoformat()
+
+# Mock database
+currency_rates_db: Dict[str, CurrencyRate] = {}
+
+
+# Function to generate a random currency rate between 0.95 and 1.5
+def generate_random_rate():
+    return round(random.uniform(0.95, 1.5), 2)
+
+# Method to call the currency rates API and store results in a list
+def fetch_currency_rates(api_url):
+    try:
+        response = requests.get(api_url)
+        response.raise_for_status()  # Raise an error for bad responses
+        rates_data = response.json()
+        
+        # Convert the response data to a list of tuples (currency, rate)
+        rates_list = []
+        for currency, rate in rates_data['usd'].items():
+            rates_list.append((currency, rate))
+        
+        return rates_list[:10]  # Return only the first 10 rates
+    except requests.exceptions.RequestException as e:
+        print(f"An error occurred: {e}")
+        return []
+
+# Method to save currency rates to a file
+def save_rates_to_file(rates_list, filename):
+    try:
+        with open(filename, 'w') as file:
+            for currency, rate in rates_list:
+                file.write(f"{currency}: {rate}\n")
+        print(f"Rates saved to {filename}")
+    except IOError as e:
+        print(f"An error occurred while writing to the file: {e}")
+
+# Define an MCP task
+@mcp.tool()
+def fetch_and_save_currency_rates():
+    """Fetch currency rates and save the first 10 to a file."""
+    api_url = "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@2025-06-06/v1/currencies/usd.json"
+    currency_rates = fetch_currency_rates(api_url)
+    save_rates_to_file(currency_rates, 'currency_rates.txt')
+    
+# Currency Conversion Management
+# @mcp.tool()
+# def add_currency_rate(from_currency: str, to_currency: str, rate: float) -> Dict:
+#     """Add a new currency conversion rate
+    
+#     Args:
+#         from_currency: Source currency code (e.g., "USD")
+#         to_currency: Target currency code (e.g., "EUR")
+#         rate: Conversion rate
+        
+#     Returns:
+#         Dictionary containing the created currency rate details
+#     """
+#     rate_id = str(uuid4())
+#     currency_rate = CurrencyRate(from_currency, to_currency, rate)
+#     currency_rates_db[rate_id] = currency_rate
+#     return {
+#         "rate_id": rate_id,
+#         "from_currency": from_currency,
+#         "to_currency": to_currency,
+#         "rate": rate,
+#         "updated_at": currency_rate.updated_at
+#     }
+
+# @mcp.tool()
+# def update_currency_rate(rate_id: str, rate: float) -> Dict:
+#     """Update an existing currency conversion rate
+    
+#     Args:
+#         rate_id: ID of the rate to update
+#         rate: New conversion rate
+        
+#     Returns:
+#         Dictionary containing the updated currency rate details
+#     """
+#     currency_rate = currency_rates_db.get(rate_id)
+#     if not currency_rate:
+#         return {"error": "Currency rate not found"}
+    
+#     currency_rate.rate = rate
+#     currency_rate.updated_at = datetime.now().isoformat()
+#     return {
+#         "rate_id": rate_id,
+#         "from_currency": currency_rate.from_currency,
+#         "to_currency": currency_rate.to_currency,
+#         "rate": rate,
+#         "updated_at": currency_rate.updated_at
+#     }
+
+# @mcp.tool()
+# def list_currency_rates(
+#     from_currency: Optional[str] = None,
+#     to_currency: Optional[str] = None
+# ) -> List[Dict]:
+#     """List all currency conversion rates with optional filtering
+    
+#     Args:
+#         from_currency: Filter by source currency code
+#         to_currency: Filter by target currency code
+        
+#     Returns:
+#         List of currency rates matching the criteria
+#     """
+#     rates = [
+#         {
+#             "rate_id": rate.rate_id,
+#             "from_currency": rate.from_currency,
+#             "to_currency": rate.to_currency,
+#             "rate": rate.rate,
+#             "updated_at": rate.updated_at
+#         }
+#         for rate in currency_rates_db.values()
+#     ]
+    
+#     if from_currency:
+#         rates = [rate for rate in rates if rate["from_currency"] == from_currency]
+    
+#     if to_currency:
+#         rates = [rate for rate in rates if rate["to_currency"] == to_currency]
+    
+#     return rates
+
+# @mcp.tool()
+# def convert_currency(amount: float, from_currency: str, to_currency: str) -> Dict:
+#     """Convert an amount from one currency to another
+    
+#     Args:
+#         amount: Amount to convert
+#         from_currency: Source currency code
+#         to_currency: Target currency code
+        
+#     Returns:
+#         Dictionary containing the converted amount and details
+#     """
+#     for rate in currency_rates_db.values():
+#         if rate.from_currency == from_currency and rate.to_currency == to_currency:
+#             converted_amount = amount * rate.rate
+#             return {
+#                 "amount": amount,
+#                 "from_currency": from_currency,
+#                 "to_currency": to_currency,
+#                 "converted_amount": converted_amount,
+#                 "rate": rate.rate,
+#                 "updated_at": rate.updated_at
+#             }
+    
+#     return {"error": "Conversion rate not found"}
+
+# @mcp.resource("rates://{rate_id}")
+# def get_currency_rate(rate_id: str) -> Dict:
+#     """Get detailed information about a specific currency rate"""
+#     currency_rate = currency_rates_db.get(rate_id)
+#     if not currency_rate:
+#         return {"error": "Currency rate not found"}
+#     return {
+#         "rate_id": currency_rate.rate_id,
+#         "from_currency": currency_rate.from_currency,
+#         "to_currency": currency_rate.to_currency,
+#         "rate": currency_rate.rate,
+#         "updated_at": currency_rate.updated_at
+#     }
+
+# @mcp.tool()
+# def delete_currency_rate(rate_id: str) -> Dict:
+#     """Delete a currency conversion rate"""
+#     if rate_id in currency_rates_db:
+#         del currency_rates_db[rate_id]
+#         return {"status": "success", "message": "Currency rate deleted successfully"}
+#     return {"status": "error", "message": "Currency rate not found"}
+
+# Run the MCP server
+if __name__ == '__main__':
+    mcp.run()
