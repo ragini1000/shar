@@ -10,20 +10,22 @@ mcp = FastMCP("CurrencyRateFetcher")
 def generate_random_rate():
     return round(random.uniform(0.95, 1.5), 2)
 
-# Method to call the currency rates API and store results in a list
 def fetch_currency_rates(api_url):
     try:
         response = requests.get(api_url)
         response.raise_for_status()  # Raise an error for bad responses
         rates_data = response.json()
         
-        # Convert the response data to a list of dictionaries
-        rates_list = [{"currency": currency, "rate": rate} for currency, rate in rates_data['usd'].items()]
+        # Extract the first 10 currency rates
+        conversion_rates = {currency: rate for currency, rate in list(rates_data['usd'].items())[:10]}
         
-        return rates_list[:10]  # Return only the first 10 rates
+        return {
+            "base_code": "USD",
+            "conversion_rates": conversion_rates
+        }
     except requests.exceptions.RequestException as e:
         print(f"An error occurred: {e}")
-        return []
+        return {}
 
 # Method to save currency rates to a JSON file
 def save_rates_to_json_file(rates_list, filename):
