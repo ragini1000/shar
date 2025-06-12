@@ -1,0 +1,37 @@
+import random
+import requests
+
+# Function to generate a random currency rate between 0.95 and 1.5
+def generate_random_rate():
+    return round(random.uniform(0.95, 1.5), 2)
+
+# Method to call the currency rates API and store results in a list
+def fetch_currency_rates(api_url):
+    try:
+        response = requests.get(api_url)
+        response.raise_for_status()  # Raise an error for bad responses
+        rates_data = response.json()
+        
+        # Convert the response data to a list of tuples (bank, currency_pair, rate)
+        rates_list = []
+        for bank, rates in rates_data.items():
+            for currency_pair, rate in rates.items():
+                rates_list.append((bank, currency_pair, rate))
+        
+        return rates_list
+    except requests.exceptions.RequestException as e:
+        print(f"An error occurred: {e}")
+        return []
+
+# Example usage
+if __name__ == '__main__':
+    # Generate a random rate
+    random_rate = generate_random_rate()
+    print(f"Random Rate: {random_rate}")
+
+    # Fetch currency rates from the API
+    api_url = "http://localhost:8000/currency-rates/"
+    currency_rates = fetch_currency_rates(api_url)
+    print("Currency Rates:")
+    for rate in currency_rates:
+        print(rate)
