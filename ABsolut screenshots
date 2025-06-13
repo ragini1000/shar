@@ -1,0 +1,40 @@
+Agentic AI Agent: Central entity responsible for decision-making and workflow management.
+MCP Servers: Host the application and manage interactions with APIs and databases.
+Banking APIs: Execute transactions and retrieve account information.
+Currency Exchange APIs: Provide exchange rates for currency conversion.
+Compliance APIs: Ensure regulatory compliance and perform checks.
+Customer Database: Store customer profiles and transaction history.
+Vector Database: Enhance LLM capabilities with efficient data retrieval.
+Transaction Database: Record payment transactions for auditing.
+Payment Workflow: Sequence of steps for processing payments.
+Scheduling Workflow: Manage payment timing and scheduling.
+
+
+
+
+
+
+
+Agentic AI Agent:
+Role: The central decision-making entity responsible for processing payment requests, optimizing fund management, and interacting with external systems.
+Capabilities: Natural language processing, decision-making, data retrieval, and transaction execution.
+MCP Servers:
+Purpose: Host the application, manage data storage, and provide scalability across multiple cloud providers.
+Components: Include modules for payment processing, data management, and API integration.
+APIs:
+Banking APIs: Facilitate communication with banks for executing transactions and retrieving account information.
+Currency Exchange APIs: Provide real-time exchange rates for currency conversion.
+Compliance APIs: Ensure adherence to regulatory standards and perform necessary checks.
+Databases:
+Customer Database: Store customer profiles, transaction history, and beneficiary details.
+Vector Database: Store embeddings for efficient retrieval and augmentation of LLM capabilities.
+Transaction Database: Record all payment transactions for auditing and analysis.
+Workflow Management:
+Payment Workflow: Define the sequence of steps for processing payments, including validation, method selection, execution, and confirmation.
+Scheduling Workflow: Manage payment timing and scheduling for immediate, same-day, or future transactions.
+
+Tools and Technologies
+Programming Languages: Python, Java for development.
+Cloud Providers: AWS Bedrock for hosting and scalability.
+APIs: RESTful or GraphQL for data exchange and integration.
+Database: MongoDB for data storage and vector data
