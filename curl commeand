@@ -4,3 +4,23 @@ curl -X POST https://dwm7smoh7wwyhtmc33rdp7nsw40ivzmn.lambda-url.us-west-2.on.aw
 
 
 curl -X POST https://dwm7smoh7wwyhtmc33rdp7nsw40ivzmn.lambda-url.us-west-2.on.aws/ -H "Content-Type: application/json" -d '{"action":"read"}
+
+
+{
+    "mcpServers": {
+        "Demo": {
+            "command": "/usr/bin/env",
+            "args": [
+                "UV_PYTHON=/Users/akashah/.pyenv/shims/python",
+                "/Users/akashah/.local/bin/uv",
+                "run",
+                "--no-managed-python",
+                "--with",
+                "mcp[cli]",
+                "mcp",
+                "run",
+"/Users/akashah/Dev/global_hackathon_2025/absolut/openbanking-mcp/main.py"
+            ]
+        }
+    }
+}
