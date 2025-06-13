@@ -24,3 +24,5 @@ curl -X POST https://dwm7smoh7wwyhtmc33rdp7nsw40ivzmn.lambda-url.us-west-2.on.aw
         }
     }
 }
+[11:47 AM] Shah, Akash P (CIB Tech, IND)
+>>> import os, sys>>> os.path.dirname(sys.executable)
