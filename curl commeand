@@ -1,8 +1,6 @@
 curl -X POST https://dwm7smoh7wwyhtmc33rdp7nsw40ivzmn.lambda-url.us-west-2.on.aws/ -H "Content-Type: application/json" -d '{"action": "read", "table_name": "fx_rate"}' -v
 
-curl -X POST https://dwm7smoh7wwyhtmc33rdp7nsw40ivzmn.lambda-url.us-west-2.on.aws/ \
--H "Content-Type: application/json" \
--d '{"action": "read", "table_name": "accounts"}'
+curl -X POST https://dwm7smoh7wwyhtmc33rdp7nsw40ivzmn.lambda-url.us-west-2.on.aws/ -H "Content-Type: application/json" -d "{\"action\":\"read\",\"table_name\":\"accounts\"}"
 
 
 curl -X POST https://dwm7smoh7wwyhtmc33rdp7nsw40ivzmn.lambda-url.us-west-2.on.aws/ -H "Content-Type: application/json" -d '{"action":"read"}
